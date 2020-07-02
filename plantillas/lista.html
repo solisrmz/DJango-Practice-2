@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>A comprar:</h2>
+<div>
+	<table>
+		<thead>
+			<th>Producto</th>
+			<th>Descripción</th>
+			<th>Detalles</th>
+			<th>Borrar</th>
+			<th>Editar</th>
+		</thead>
+		<tbody>
+			{%for obj in queryset%}
+			<tr>
+				<td>{{ obj.nombre }}</td>
+				<td>{{ obj.receta }}</td>
+				<td><a href="{%url 'detail' obj.id%}">Detalles</a></td>
+				<td><a href="">Borrar</a></td>
+				<td><a href="">Editar</a></td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock %}
