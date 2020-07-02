@@ -1,5 +1,7 @@
 from django.conf.urls import url
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 from django.views.generic.base import TemplateView
 
 
@@ -35,3 +37,6 @@ urlpatterns = [
     url(r'^detail/(?P<pk>\d+)/edit/$', update, name='update'),
     url(r'^detail/(?P<pk>\d+)/delete/$', delete, name='delete'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
