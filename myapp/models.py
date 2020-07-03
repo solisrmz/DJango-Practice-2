@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.urls import reverse
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 # Create your models here.
 TIPO_CHOICES = (
         ('CER', 'Cereal'),
@@ -21,3 +22,4 @@ class ComprarArticulo(models.Model): #single.
     def get_absolute_url(self):
         view_name = "detail"
         return reverse(view_name, kwargs={"pk": self.id})
+

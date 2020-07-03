@@ -19,69 +19,88 @@ from django.urls import reverse
 from .forms import CompraModelForm
 from .models import ComprarArticulo
 
-#Create your views here.
-#Vistas basadas en clases
-#Para proteger y decorar clases, de este modo hay que loguearse para poder hacer operaciones de borrar, crear, editar
+# Create your views here.
+# Vistas basadas en clases
+# Para proteger y decorar clases, de este modo hay que loguearse para poder hacer operaciones de borrar, crear, editar
+
+
 class StaffRequiredMixin(object):
-	@method_decorator(login_required)
-	def dispatch(self, request, *args, **kwargs):
-		return super(StaffRequiredMixin, self).dispatch(request, *args, **kwargs)
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(StaffRequiredMixin, self).dispatch(request, *args, **kwargs)
+
 
 class MyAppTemplateView(TemplateView):
-	template_name = "home.html"
+    template_name = "home.html"
 
-	#Obtiene el contexto de dicha plantilla (objetos, query, etc..)
-	def get_context_data(self, *args, **kwargs):
-		context = super(MyAppTemplateView, self).get_context_data(*args, **kwargs)
-		context["titulo"] = "Eat the rainbow"
-		return context
-#Create
+    # Obtiene el contexto de dicha plantilla (objetos, query, etc..)
+    def get_context_data(self, *args, **kwargs):
+        context = super(MyAppTemplateView, self).get_context_data(
+            *args, **kwargs)
+        context["titulo"] = "Eat the rainbow"
+        return context
+# Create
+
+
 class Create(CreateView):
-	#model = ComprarArticulo
-	#fields = ["nombre", "tipo_de_comida"]
-	template_name = "form.html"
-	form_class = CompraModelForm
+    #model = ComprarArticulo
+    #fields = ["nombre", "tipo_de_comida"]
+    template_name = "form.html"
+    form_class = CompraModelForm
 
-	def get_success_url(self):
-		return reverse("lista")
-#Update
-class Update(StaffRequiredMixin,UpdateView):
-	model = ComprarArticulo
-	# fields = []
-	form_class = CompraModelForm
-	template_name = "myapp/comprararticulo_update.html"
-#Delete
+    def get_success_url(self):
+        return reverse("lista")
+# Update
+
+
+class Update(StaffRequiredMixin, UpdateView):
+    model = ComprarArticulo
+    # fields = []
+    form_class = CompraModelForm
+    template_name = "myapp/comprararticulo_update.html"
+# Delete
+
+
 class Delete(DeleteView):
-	model = ComprarArticulo
+    model = ComprarArticulo
 
-	def get_success_url(self):
-		return reverse("list")		
+    def get_success_url(self):
+        return reverse("list")
 
-#Details
+# Details
+
+
 class Detail(DetailView):
-	model = ComprarArticulo
+    model = ComprarArticulo
 
-#Objects list
+# Objects list
+
+
 class List(ListView):
-	model = ComprarArticulo
-	#Queryset con todos lo objectos de este modelo guardados en la BD
-	def get_context_data(self, *args, **kwargs):
-		context = super(List, self).get_context_data(*args, **kwargs)
-		context['query'] = ComprarArticulo.objects.all()
-		return context
+    model = ComprarArticulo
+    # Queryset con todos lo objectos de este modelo guardados en la BD
 
-#Para la autenticación de usuarios
+    def get_context_data(self, *args, **kwargs):
+        context = super(List, self).get_context_data(*args, **kwargs)
+        context['query'] = ComprarArticulo.objects.all()
+        return context
+
+# Para la autenticación de usuarios
+
+
 def register(request):
-	# Creamos el formulario de autenticación vacío
+    # Creamos el formulario de autenticación vacío
     form = UserCreationForm()
     if request.method == "POST":
         # Añadimos los datos recibidos al formulario
         form = UserCreationForm(data=request.POST)
         # Si el formulario es válido...
         if form.is_valid():
-            # Creamos la nueva cuenta de usuario
             user = form.save()
-            # Si el usuario se crea correctamente 
+            if rol == 'Consumidor':
+                group = Group.objects.get(name='Consumidor')
+                user.groups.add(group)
+            # Si el usuario se crea correctamente
             if user is not None:
                 # Hacemos el login manualmente
                 do_login(request, user)
@@ -91,8 +110,9 @@ def register(request):
     # Si llegamos al final renderizamos el formulario
     return render(request, "users/register.html", {'form': form})
 
+
 def login(request):
-	 # Creamos el formulario de autenticación vacío
+    # Creamos el formulario de autenticación vacío
     form = AuthenticationForm()
     if request.method == "POST":
         # Añadimos los datos recibidos al formulario
@@ -115,22 +135,27 @@ def login(request):
 
     # Si llegamos al final renderizamos el formulario
     return render(request, "users/login.html", {'form': form})
-	
+
+
 def logout(request):
-	# Finalizamos la sesión
+    # Finalizamos la sesión
     do_logout(request)
     # Redireccionamos a la portada
     return redirect('home')
 
-def welcome(request):
-	template = "users/welcome.html" 
-	return render(request,template, {})	
 
-#Para las vistas basadas en funciones
+def welcome(request):
+    template = "users/welcome.html"
+    return render(request, template, {})
+
+# Para las vistas basadas en funciones
+
+
 def home(request):
-	template = "home.html"
-	context = {}
-	return render(request, template, context)
+    template = "home.html"
+    context = {}
+    return render(request, template, context)
+
 
 def lista(request):
     template = "lista.html"
@@ -142,17 +167,17 @@ def lista(request):
 
 
 def detail(request, pk=None):
-	producto = get_object_or_404(ComprarArticulo, pk=pk)
-	template = "detail.html"
-	context = {
-		"titulo": "SOBRE EL PRODUCTO",
-		"objeto": producto
-	}
+    producto = get_object_or_404(ComprarArticulo, pk=pk)
+    template = "detail.html"
+    context = {
+        "titulo": "SOBRE EL PRODUCTO",
+        "objeto": producto
+    }
 
-	return render(request, template, context)
+    return render(request, template, context)
 
 
-@login_required (login_url='/admin/')
+@login_required(login_url='/admin/')
 def create(request):
     form = CompraModelForm(request.POST or None)
     template = "form.html"
@@ -161,40 +186,40 @@ def create(request):
     }
     if form.is_valid():
         instance = form.save(commit=False)
-        #codigo
+        # codigo
         instance.save()
-        return redirect(instance) 
+        return redirect(instance)
     return render(request, template, context)
 
 
 @login_required(login_url='/admin/')
 def update(request, pk=None):
-	producto = get_object_or_404(ComprarArticulo, pk=pk)
-	form = CompraModelForm(request.POST or None, instance=producto)
-	if form.is_valid():
-		instance = form.save(commit=False)
-		instance.save()
-	template = "update.html"
-	if request.method == 'POST':
-		producto.save()
-		return HttpResponseRedirect("/lista/")
-	context = {
-		"objeto": producto,
-		"form": form,
-		}
-	return render(request, template, context)
+    producto = get_object_or_404(ComprarArticulo, pk=pk)
+    form = CompraModelForm(request.POST or None, instance=producto)
+    if form.is_valid():
+        instance = form.save(commit=False)
+        instance.save()
+    template = "update.html"
+    if request.method == 'POST':
+        producto.save()
+        return HttpResponseRedirect("/lista/")
+    context = {
+        "objeto": producto,
+        "form": form,
+    }
+    return render(request, template, context)
 
 
 @login_required(login_url='/admin/')
 def delete(request, pk):
-	producto = get_object_or_404(ComprarArticulo, pk=pk)
-	template = "delete.html"
-	
-	if request.method == 'POST':
-		producto.delete()
-		return HttpResponseRedirect("/lista/")
-	
-	context = {
-		"objeto": producto
-		}
-	return render(request, template, context)
+    producto = get_object_or_404(ComprarArticulo, pk=pk)
+    template = "delete.html"
+
+    if request.method == 'POST':
+        producto.delete()
+        return HttpResponseRedirect("/lista/")
+
+    context = {
+        "objeto": producto
+    }
+    return render(request, template, context)
