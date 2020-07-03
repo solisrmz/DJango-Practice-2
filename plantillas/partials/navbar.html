@@ -32,15 +32,19 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <a class="dropdown-item" href="">{{user.get_username}}</a>
                   <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href=""><i class="fas fa-clipboard-list"></i>{%trans "Salir"%}</a>
+                  {%if user.is_staff %}
+                      <a class="dropdown-item" href="{%url 'logout'%}"><i class="fas fa-clipboard-list"></i>{%trans "Salir"%}</a>
+                  {%else%}
+                      <a class="dropdown-item" href="{%url 'logout'%}"><i class="fas fa-clipboard-list"></i>{%trans "Salir"%}</a>
+                  {%endif%}
                 </div>
               </li>
             {%else%}
             <li class="nav-item">
-                <a href="" class="nav-link">{%trans "Login"%}</a>
+                <a href="{%url 'login'%}" class="nav-link">{%trans "Login"%}</a>
             </li>
             <li class="nav-item">
-                <a href="" class="nav-link">{%trans "Register"%}</a>
+                <a href="{%url 'register'%}" class="nav-link">{%trans "Register"%}</a>
             </li>
             {%endif%}
         </div>

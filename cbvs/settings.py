@@ -26,7 +26,6 @@ SECRET_KEY = 'rhv10o$n)!w!qi%ahn65cyu1_(_h6%#z1dgl06($4@!=-g2f$o'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 LOGIN_URL = '/admin/' #default path for login required decorator
 
 # Application definition
@@ -54,7 +53,6 @@ MIDDLEWARE = [
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 ROOT_URLCONF = 'cbvs.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -80,7 +78,7 @@ WSGI_APPLICATION = 'cbvs.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django-test',
+        'NAME': 'myapp',
         'USER': 'root',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '127.0.0.1',                      # Set to empty string for localhost. Not used with sqlite3.

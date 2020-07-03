@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic.base import TemplateView
-
+from django.contrib.auth.views import LogoutView
 
 from myapp.views import (
     MyAppTemplateView,
@@ -18,6 +18,10 @@ from myapp.views import (
 	detail,
 	update,
     delete,
+    register,
+    welcome,
+    login,
+    logout,
     )
 
 urlpatterns = [
@@ -36,6 +40,11 @@ urlpatterns = [
     url(r'^detail/(?P<pk>\d+)/$', detail, name='detail'),
     url(r'^detail/(?P<pk>\d+)/edit/$', update, name='update'),
     url(r'^detail/(?P<pk>\d+)/delete/$', delete, name='delete'),
+
+    #Para la autenticación
+    url('register', register, name="register"),
+    url('login', login, name="login"),
+    url('logout', logout, name="logout"),
 ]
 
 if settings.DEBUG:

@@ -1,6 +1,11 @@
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as do_login
+from django.contrib.auth import logout 
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
@@ -64,6 +69,63 @@ class List(ListView):
 		context = super(List, self).get_context_data(*args, **kwargs)
 		context['query'] = ComprarArticulo.objects.all()
 		return context
+
+#Para la autenticación de usuarios
+def register(request):
+	# Creamos el formulario de autenticación vacío
+    form = UserCreationForm()
+    if request.method == "POST":
+        # Añadimos los datos recibidos al formulario
+        form = UserCreationForm(data=request.POST)
+        # Si el formulario es válido...
+        if form.is_valid():
+            # Creamos la nueva cuenta de usuario
+            user = form.save()
+            # Si el usuario se crea correctamente 
+            if user is not None:
+                # Hacemos el login manualmente
+                do_login(request, user)
+                # Y le redireccionamos a la portada
+                return redirect('/')
+
+    # Si llegamos al final renderizamos el formulario
+    return render(request, "users/register.html", {'form': form})
+
+def login(request):
+	 # Creamos el formulario de autenticación vacío
+    form = AuthenticationForm()
+    if request.method == "POST":
+        # Añadimos los datos recibidos al formulario
+        form = AuthenticationForm(data=request.POST)
+        # Si el formulario es válido...
+        if form.is_valid():
+            # Recuperamos las credenciales validadas
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+
+            # Verificamos las credenciales del usuario
+            user = authenticate(username=username, password=password)
+
+            # Si existe un usuario con ese nombre y contraseña
+            if user is not None:
+                # Hacemos el login manualmente
+                do_login(request, user)
+                # Y le redireccionamos a la portada
+                return redirect('/')
+
+    # Si llegamos al final renderizamos el formulario
+    return render(request, "users/login.html", {'form': form})
+
+def logout(request):
+    template = "home.html"
+	# Finalizamos la sesión
+    logout(request)
+    # Redireccionamos a la portada
+    return render(request, template, {})
+
+def welcome(request):
+	template = "users/welcome.html" 
+	return render(request,template, {})	
 
 #Para las vistas basadas en funciones
 def home(request):
