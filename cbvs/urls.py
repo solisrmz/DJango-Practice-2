@@ -14,6 +14,7 @@ from myapp.views import (
     Delete,
     home,
 	create,
+    CreateNota,
 	lista,
 	detail,
 	update,
@@ -29,6 +30,7 @@ urlpatterns = [
     #Por clases bases
     url(r'^home/$', MyAppTemplateView.as_view(), name='home'),
     url(r'^create/$', Create.as_view(), name='create'),
+    url(r'^create-nota/$', CreateNota, name='create-nota'),
     url(r'^detail/(?P<pk>\d+)/$', Detail.as_view(), name='detail'),
     url(r'^lista/$', List.as_view(), name='lista'),
     url(r'^edit/(?P<pk>\d+)/$', Update.as_view(), name='edit'),

@@ -17,8 +17,8 @@ from django.views.generic.edit import UpdateView
 from django.views.generic.edit import DeleteView
 from django.urls import reverse
 
-from .forms import CompraModelForm
-from .models import ComprarArticulo
+from .forms import CompraModelForm, NotaForm
+from .models import ComprarArticulo, Nota
 
 # Create your views here.
 # Vistas basadas en clases
@@ -97,25 +97,23 @@ def register(request):
         form = UserCreationForm(data=request.POST)
         # Si el formulario es válido...
         if form.is_valid():
-            #Obtenemos el rol que tendrá el usuario en la plataforma
+            # Obtenemos el rol que tendrá el usuario en la plataforma
             rol = form.cleaned_data['rol']
             user = form.save()
-            
-            #Si es consumidor, lo agrega al grupo de los consumidore
+            # Si es consumidor, lo agrega al grupo de los consumidore
             if rol == 'Consumidor':
                 group = Group.objects.get(name='Consumidor')
                 user.groups.add(group)
-            #Si es productor, lo agrega al grupo de productores    
+            # Si es productor, lo agrega al grupo de productores
             if rol == 'Productor':
                 group = Group.objects.get(name='Productor')
-                user.groups.add(group)    
+                user.groups.add(group)
             # Si el usuario se crea correctamente
             if user is not None:
                 # Hacemos el login manualmente
                 do_login(request, user)
                 # Y le redireccionamos a la portada
                 return redirect('home/')
-
     # Si llegamos al final renderizamos el formulario
     return render(request, "users/register.html", {'form': form})
 
@@ -151,6 +149,26 @@ def logout(request):
     do_logout(request)
     # Redireccionamos a la portada
     return redirect('home')
+
+
+def CreateNota(request):
+    # Creamos el formulario de autenticación vacío
+    form = NotaForm(data=request.POST)
+    if form.is_valid():
+        # Recuperamos las credenciales validadas
+        form_data = form.cleaned_data
+        name = form_data.get("name")
+        desc = form_data.get("desc")
+        
+        user = request.user.id
+            
+        nota = Nota()
+        nota.user_id_id = user
+        nota.name = name
+        nota.desc = desc
+        nota.save()
+    # Si llegamos al final renderizamos el formulario
+    return render(request, "formNota.html", {'form': form})
 
 
 def welcome(request):
