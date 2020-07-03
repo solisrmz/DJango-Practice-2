@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as do_login
-from django.contrib.auth import logout 
+from django.contrib.auth import logout as do_logout
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
@@ -86,7 +86,7 @@ def register(request):
                 # Hacemos el login manualmente
                 do_login(request, user)
                 # Y le redireccionamos a la portada
-                return redirect('/')
+                return redirect('home/')
 
     # Si llegamos al final renderizamos el formulario
     return render(request, "users/register.html", {'form': form})
@@ -111,17 +111,16 @@ def login(request):
                 # Hacemos el login manualmente
                 do_login(request, user)
                 # Y le redireccionamos a la portada
-                return redirect('/')
+                return redirect('home/')
 
     # Si llegamos al final renderizamos el formulario
     return render(request, "users/login.html", {'form': form})
-
+	
 def logout(request):
-    template = "home.html"
 	# Finalizamos la sesión
-    logout(request)
+    do_logout(request)
     # Redireccionamos a la portada
-    return render(request, template, {})
+    return redirect('home')
 
 def welcome(request):
 	template = "users/welcome.html" 
