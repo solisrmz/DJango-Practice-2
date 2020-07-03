@@ -6,6 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as do_login
 from django.contrib.auth import logout as do_logout
+from django.contrib.auth.models import Group
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
@@ -96,10 +97,18 @@ def register(request):
         form = UserCreationForm(data=request.POST)
         # Si el formulario es válido...
         if form.is_valid():
+            #Obtenemos el rol que tendrá el usuario en la plataforma
+            rol = form.cleaned_data['rol']
             user = form.save()
+            
+            #Si es consumidor, lo agrega al grupo de los consumidore
             if rol == 'Consumidor':
                 group = Group.objects.get(name='Consumidor')
                 user.groups.add(group)
+            #Si es productor, lo agrega al grupo de productores    
+            if rol == 'Productor':
+                group = Group.objects.get(name='Productor')
+                user.groups.add(group)    
             # Si el usuario se crea correctamente
             if user is not None:
                 # Hacemos el login manualmente
