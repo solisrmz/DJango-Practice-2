@@ -6,7 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as do_login
 from django.contrib.auth import logout as do_logout
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
@@ -51,17 +51,15 @@ class Create(CreateView):
 
     def get_success_url(self):
         return reverse("lista")
+    
 # Update
-
-
 class Update(StaffRequiredMixin, UpdateView):
     model = ComprarArticulo
     # fields = []
     form_class = CompraModelForm
     template_name = "myapp/comprararticulo_update.html"
+    
 # Delete
-
-
 class Delete(DeleteView):
     model = ComprarArticulo
 
@@ -151,26 +149,26 @@ def logout(request):
     return redirect('home')
 
 
-def CreateNota(request):
-    # Creamos el formulario de autenticación vacío
-    form = NotaForm(data=request.POST)
-    if form.is_valid():
-        # Recuperamos las credenciales validadas
-        form_data = form.cleaned_data
-        name = form_data.get("name")
-        desc = form_data.get("desc")
-        
-        user = request.user.id
-            
-        nota = Nota()
-        nota.user_id_id = user
-        nota.name = name
-        nota.desc = desc
-        nota.save()
-    # Si llegamos al final renderizamos el formulario
-    return render(request, "formNota.html", {'form': form})
-
-
+class CreateNota(CreateView):
+# Creamos el formulario de autenticación vacío
+    template_name = "formNota.html"
+    form_class = NotaForm
+    def form_valid(self, form):
+        object = form.save(commit=False)
+        object.user_id_id = self.request.user.id
+        object.save()
+        return super(CreateNota, self).form_valid(form)
+    
+    def get_success_url(self):
+        return reverse("home")
+    
+# Update
+class UpdateNota(StaffRequiredMixin, UpdateView):
+    model = Nota
+    # fields = []
+    form_class = NotaForm
+    template_name = "update.html"
+    
 def welcome(request):
     template = "users/welcome.html"
     return render(request, template, {})

@@ -15,6 +15,13 @@ def clean(self, *args, **kwargs):
     cleaned_data = super(CompraModelForm, self).clean(*args, **kwargs)
 
 
-class NotaForm(forms.Form):
-    name = forms.CharField(max_length = 500)
-    desc = forms.CharField(max_length= 500)        
+class NotaForm(forms.ModelForm):
+    class Meta:
+        model = Nota
+        fields = ["name", "desc"]
+        widgets = {
+            'desc': forms.Textarea()
+        }
+
+def clean(self, *args, **kwargs):
+    cleaned_data = super(NotaForm, self).clean(*args, **kwargs)
