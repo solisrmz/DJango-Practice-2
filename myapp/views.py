@@ -78,10 +78,9 @@ class Detail(DetailView):
 class List(ListView):
     model = ComprarArticulo
     # Queryset con todos lo objectos de este modelo guardados en la BD
-
     def get_context_data(self, *args, **kwargs):
         context = super(List, self).get_context_data(*args, **kwargs)
-        context['query'] = ComprarArticulo.objects.all()
+        context['query'] = Nota.objects.filter(user_id = self.request.user)
         return context
 
 # Para la autenticación de usuarios

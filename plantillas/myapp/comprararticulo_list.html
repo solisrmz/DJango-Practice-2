@@ -15,8 +15,8 @@
 		<tbody>
 			{%for object in query %}
 			<tr>
-				<td>{{ object.nombre }}</td>
-				<td>{{ object.receta }}</td>
+				<td>{{ object.name }}</td>
+				<td>{{ object.desc }}</td>
 				<td><a class="btn btn-info" href="{%url 'detail' object.id%}">Detalles</a></td>
 				{%if perms.myapp.delete_comprararticulo %}
 					<td><a class="btn btn-danger" href="{%url 'delete' object.id%}">Borrar</a></td>
